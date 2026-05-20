@@ -1,0 +1,45 @@
+{
+  "distribution": {
+    "ks_statistic": 0.0273,
+    "ks_pvalue": 0.0,
+    "wasserstein_dist": 1.0503,
+    "original_stats": {
+      "mean": 133.698,
+      "std": 21.644,
+      "skew": -0.535,
+      "kurtosis": 0.795,
+      "p5": 93.0,
+      "p25": 122.5,
+      "p50": 135.75,
+      "p75": 147.0,
+      "p95": 166.0
+    },
+    "synthetic_stats": {
+      "mean": 132.775,
+      "std": 22.22,
+      "skew": -0.457,
+      "kurtosis": 0.452,
+      "p5": 91.399,
+      "p25": 120.75,
+      "p50": 134.75,
+      "p75": 147.0,
+      "p95": 166.612
+    }
+  },
+  "temporal_structure": {
+    "acf_mae": 0.17047,
+    "acf_pearson_r": 0.9701,
+    "orig_acf_lag1": 0.9736,
+    "synt_acf_lag1": 0.9875
+  },
+  "spectral": {
+    "psd_log_corr": 0.9802,
+    "psd_log_mae": 2.1921
+  },
+  "interpretation": [
+    "\u2705 KS-test: distribuciones muy similares (D<0.05)",
+    "\u26a0\ufe0f  Wasserstein: distancia 1\u20133 bpm \u2014 sesgo leve",
+    "\u26a0\ufe0f  ACF Pearson r > 0.90 \u2014 estructura temporal aceptable",
+    "\u2705 PSD log-corr > 0.95 \u2014 contenido espectral preservado"
+  ]
+}

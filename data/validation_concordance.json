@@ -1,0 +1,12 @@
+{
+  "n_original": 552,
+  "n_synthetic": 1104,
+  "n_total": 1656,
+  "fhr_mean_diff_mean": 1.578,
+  "fhr_mean_diff_max": 7.858,
+  "fhr_std_diff_mean": 1.285,
+  "fhr_std_diff_max": 7.836,
+  "pct_within_5bpm": 96.5,
+  "pct_within_10bpm": 100.0,
+  "pH_unique_per_source": 1
+}

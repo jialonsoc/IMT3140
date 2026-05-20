@@ -1,0 +1,182 @@
+{
+  "block_bootstrap": {
+    "distribution": {
+      "ks_statistic": 0.0015,
+      "ks_pvalue": 0.0023,
+      "wasserstein_dist": 0.0815,
+      "original_stats": {
+        "mean": 133.698,
+        "std": 21.644,
+        "skew": -0.535,
+        "kurtosis": 0.795,
+        "p5": 93.0,
+        "p25": 122.5,
+        "p50": 135.75,
+        "p75": 147.0,
+        "p95": 166.0
+      },
+      "synthetic_stats": {
+        "mean": 133.734,
+        "std": 21.681,
+        "skew": -0.552,
+        "kurtosis": 0.826,
+        "p5": 93.0,
+        "p25": 122.5,
+        "p50": 135.75,
+        "p75": 147.0,
+        "p95": 166.0
+      }
+    },
+    "temporal_structure": {
+      "acf_mae": 0.25794,
+      "acf_pearson_r": 0.9759,
+      "orig_acf_lag1": 0.9736,
+      "synt_acf_lag1": 0.9655
+    },
+    "spectral": {
+      "psd_log_corr": 0.997,
+      "psd_log_mae": 0.2667
+    },
+    "interpretation": [
+      "\u2705 KS-test: distribuciones muy similares (D<0.05)",
+      "\u2705 Wasserstein: distancia < 1 bpm \u2014 distribuci\u00f3n preservada",
+      "\u26a0\ufe0f  ACF Pearson r > 0.90 \u2014 estructura temporal aceptable",
+      "\u2705 PSD log-corr > 0.95 \u2014 contenido espectral preservado"
+    ]
+  },
+  "moving_block": {
+    "distribution": {
+      "ks_statistic": 0.0022,
+      "ks_pvalue": 0.0,
+      "wasserstein_dist": 0.0676,
+      "original_stats": {
+        "mean": 133.698,
+        "std": 21.644,
+        "skew": -0.535,
+        "kurtosis": 0.795,
+        "p5": 93.0,
+        "p25": 122.5,
+        "p50": 135.75,
+        "p75": 147.0,
+        "p95": 166.0
+      },
+      "synthetic_stats": {
+        "mean": 133.645,
+        "std": 21.598,
+        "skew": -0.543,
+        "kurtosis": 0.81,
+        "p5": 93.0,
+        "p25": 122.5,
+        "p50": 135.75,
+        "p75": 147.0,
+        "p95": 165.75
+      }
+    },
+    "temporal_structure": {
+      "acf_mae": 0.26077,
+      "acf_pearson_r": 0.9774,
+      "orig_acf_lag1": 0.9736,
+      "synt_acf_lag1": 0.9645
+    },
+    "spectral": {
+      "psd_log_corr": 0.9974,
+      "psd_log_mae": 0.2894
+    },
+    "interpretation": [
+      "\u2705 KS-test: distribuciones muy similares (D<0.05)",
+      "\u2705 Wasserstein: distancia < 1 bpm \u2014 distribuci\u00f3n preservada",
+      "\u26a0\ufe0f  ACF Pearson r > 0.90 \u2014 estructura temporal aceptable",
+      "\u2705 PSD log-corr > 0.95 \u2014 contenido espectral preservado"
+    ]
+  },
+  "stationary_bootstrap": {
+    "distribution": {
+      "ks_statistic": 0.0023,
+      "ks_pvalue": 0.0,
+      "wasserstein_dist": 0.119,
+      "original_stats": {
+        "mean": 133.698,
+        "std": 21.644,
+        "skew": -0.535,
+        "kurtosis": 0.795,
+        "p5": 93.0,
+        "p25": 122.5,
+        "p50": 135.75,
+        "p75": 147.0,
+        "p95": 166.0
+      },
+      "synthetic_stats": {
+        "mean": 133.723,
+        "std": 21.701,
+        "skew": -0.562,
+        "kurtosis": 0.866,
+        "p5": 92.5,
+        "p25": 122.75,
+        "p50": 135.75,
+        "p75": 147.0,
+        "p95": 165.75
+      }
+    },
+    "temporal_structure": {
+      "acf_mae": 0.20875,
+      "acf_pearson_r": 0.9923,
+      "orig_acf_lag1": 0.9736,
+      "synt_acf_lag1": 0.9652
+    },
+    "spectral": {
+      "psd_log_corr": 0.9988,
+      "psd_log_mae": 0.2846
+    },
+    "interpretation": [
+      "\u2705 KS-test: distribuciones muy similares (D<0.05)",
+      "\u2705 Wasserstein: distancia < 1 bpm \u2014 distribuci\u00f3n preservada",
+      "\u2705 ACF Pearson r > 0.98 \u2014 estructura temporal excelente",
+      "\u2705 PSD log-corr > 0.95 \u2014 contenido espectral preservado"
+    ]
+  },
+  "jitter_warp": {
+    "distribution": {
+      "ks_statistic": 0.0064,
+      "ks_pvalue": 0.0,
+      "wasserstein_dist": 0.2099,
+      "original_stats": {
+        "mean": 133.698,
+        "std": 21.644,
+        "skew": -0.535,
+        "kurtosis": 0.795,
+        "p5": 93.0,
+        "p25": 122.5,
+        "p50": 135.75,
+        "p75": 147.0,
+        "p95": 166.0
+      },
+      "synthetic_stats": {
+        "mean": 133.562,
+        "std": 21.91,
+        "skew": -0.572,
+        "kurtosis": 0.849,
+        "p5": 92.114,
+        "p25": 122.336,
+        "p50": 135.551,
+        "p75": 147.169,
+        "p95": 166.057
+      }
+    },
+    "temporal_structure": {
+      "acf_mae": 0.04753,
+      "acf_pearson_r": 0.9945,
+      "orig_acf_lag1": 0.9736,
+      "synt_acf_lag1": 0.9805
+    },
+    "spectral": {
+      "psd_log_corr": 0.9936,
+      "psd_log_mae": 0.2922
+    },
+    "interpretation": [
+      "\u2705 KS-test: distribuciones muy similares (D<0.05)",
+      "\u2705 Wasserstein: distancia < 1 bpm \u2014 distribuci\u00f3n preservada",
+      "\u2705 ACF Pearson r > 0.98 \u2014 estructura temporal excelente",
+      "\u2705 PSD log-corr > 0.95 \u2014 contenido espectral preservado"
+    ]
+  }
+}

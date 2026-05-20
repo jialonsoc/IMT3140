@@ -1,0 +1,5 @@
+strategy,KS_stat,Wasserstein,ACF_r,PSD_corr
+block_bootstrap,0.0015,0.0815,0.9759,0.997
+moving_block,0.0022,0.0676,0.9774,0.9974
+stationary_bootstrap,0.0023,0.119,0.9923,0.9988
+jitter_warp,0.0064,0.2099,0.9945,0.9936
