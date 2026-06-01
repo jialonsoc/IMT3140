@@ -1,0 +1,211 @@
+{
+  "target_definition": "pH < 7.10 OR Apgar5 < 7 OR NICU_days > 0",
+  "random_state": 42,
+  "train_size": 386,
+  "test_size": 166,
+  "target_prevalence_total": 0.1213768115942029,
+  "target_prevalence_train": 0.12176165803108809,
+  "target_prevalence_test": 0.12048192771084337,
+  "aic_selection_order": [
+    {
+      "step": 1,
+      "feature": "fhr_baseline_std_bpm",
+      "criterion_value": 264.90420582330023,
+      "delta": 23.060296038858496
+    },
+    {
+      "step": 2,
+      "feature": "Deliv_type",
+      "criterion_value": 245.52745067681855,
+      "delta": 19.376755146481685
+    },
+    {
+      "step": 3,
+      "feature": "accelerations_count",
+      "criterion_value": 231.01449317792498,
+      "delta": 14.51295749889357
+    },
+    {
+      "step": 4,
+      "feature": "deceleration_uc_lag_mean_s",
+      "criterion_value": 224.40832529495128,
+      "delta": 6.606167882973693
+    },
+    {
+      "step": 5,
+      "feature": "ltv_valid_windows",
+      "criterion_value": 222.7208931661315,
+      "delta": 1.687432128819779
+    },
+    {
+      "step": 6,
+      "feature": "decelerations_count",
+      "criterion_value": 219.48673115250713,
+      "delta": 3.2341620136243705
+    },
+    {
+      "step": 7,
+      "feature": "Age",
+      "criterion_value": 217.83901523380763,
+      "delta": 1.6477159186995038
+    },
+    {
+      "step": 8,
+      "feature": "fhr_baseline_slope_bpm_min",
+      "criterion_value": 215.9416493107692,
+      "delta": 1.8973659230384214
+    },
+    {
+      "step": 9,
+      "feature": "fhr_baseline_median_bpm",
+      "criterion_value": 214.7851868747637,
+      "delta": 1.156462436005512
+    },
+    {
+      "step": 10,
+      "feature": "accelerations_mean_duration_s",
+      "criterion_value": 214.01793698636658,
+      "delta": 0.7672498883971173
+    },
+    {
+      "step": 11,
+      "feature": "fhr_sampen",
+      "criterion_value": 213.97263614155284,
+      "delta": 0.045300844813738195
+    }
+  ],
+  "bic_selection_order": [
+    {
+      "step": 1,
+      "feature": "fhr_baseline_std_bpm",
+      "criterion_value": 272.8158805622299,
+      "delta": 19.104458669393637
+    },
+    {
+      "step": 2,
+      "feature": "Deliv_type",
+      "criterion_value": 257.394962785213,
+      "delta": 15.420917777016882
+    },
+    {
+      "step": 3,
+      "feature": "accelerations_count",
+      "criterion_value": 246.8378426557843,
+      "delta": 10.55712012942871
+    },
+    {
+      "step": 4,
+      "feature": "deceleration_uc_lag_mean_s",
+      "criterion_value": 244.18751214227544,
+      "delta": 2.6503305135088624
+    }
+  ],
+  "aic_final_criterion": 213.97263614155284,
+  "bic_final_criterion": 244.18751214227544,
+  "aic_coefficients": [
+    {
+      "Feature": "Intercept",
+      "Coefficient": -3.071735729256679,
+      "Odds_Ratio": 0.046340650188183,
+      "P_Value": 1.7899480088298976e-23
+    },
+    {
+      "Feature": "fhr_baseline_std_bpm",
+      "Coefficient": 1.0008148199133633,
+      "Odds_Ratio": 2.7204976412446027,
+      "P_Value": 5.123494794246981e-06
+    },
+    {
+      "Feature": "Deliv_type",
+      "Coefficient": 0.9912554315536819,
+      "Odds_Ratio": 2.6946152547506173,
+      "P_Value": 1.6164060339827566e-07
+    },
+    {
+      "Feature": "accelerations_count",
+      "Coefficient": 0.6291244510530861,
+      "Odds_Ratio": 1.8759673587639156,
+      "P_Value": 0.004254024749400615
+    },
+    {
+      "Feature": "deceleration_uc_lag_mean_s",
+      "Coefficient": 0.3491694501356593,
+      "Odds_Ratio": 1.4178894315434842,
+      "P_Value": 0.01831786849477868
+    },
+    {
+      "Feature": "ltv_valid_windows",
+      "Coefficient": 0.9569182859702157,
+      "Odds_Ratio": 2.603660360620103,
+      "P_Value": 0.0004813379872886679
+    },
+    {
+      "Feature": "decelerations_count",
+      "Coefficient": 0.8578202646149359,
+      "Odds_Ratio": 2.358015238623666,
+      "P_Value": 0.0028364658578943673
+    },
+    {
+      "Feature": "Age",
+      "Coefficient": 0.44101317688469854,
+      "Odds_Ratio": 1.5542811827913061,
+      "P_Value": 0.02886379227178832
+    },
+    {
+      "Feature": "fhr_baseline_slope_bpm_min",
+      "Coefficient": -0.41814406784736724,
+      "Odds_Ratio": 0.6582673864277954,
+      "P_Value": 0.02386165759415992
+    },
+    {
+      "Feature": "fhr_baseline_median_bpm",
+      "Coefficient": -0.3522381860161051,
+      "Odds_Ratio": 0.703112630433745,
+      "P_Value": 0.09426224986104205
+    },
+    {
+      "Feature": "accelerations_mean_duration_s",
+      "Coefficient": -0.41268513408196367,
+      "Odds_Ratio": 0.6618706505321837,
+      "P_Value": 0.10847696638678657
+    },
+    {
+      "Feature": "fhr_sampen",
+      "Coefficient": 0.34312700821792963,
+      "Odds_Ratio": 1.4093477493058586,
+      "P_Value": 0.15032655540918077
+    }
+  ],
+  "bic_coefficients": [
+    {
+      "Feature": "Intercept",
+      "Coefficient": -2.658470331787458,
+      "Odds_Ratio": 0.07005530119311681,
+      "P_Value": 1.9294972114037423e-27
+    },
+    {
+      "Feature": "fhr_baseline_std_bpm",
+      "Coefficient": 0.7859829803884283,
+      "Odds_Ratio": 2.1945630933136457,
+      "P_Value": 5.428451928382324e-06
+    },
+    {
+      "Feature": "Deliv_type",
+      "Coefficient": 0.8413096491893212,
+      "Odds_Ratio": 2.319402592276204,
+      "P_Value": 7.931071108889437e-09
+    },
+    {
+      "Feature": "accelerations_count",
+      "Coefficient": 0.6758300259449336,
+      "Odds_Ratio": 1.965663851037285,
+      "P_Value": 1.713805345267593e-05
+    },
+    {
+      "Feature": "deceleration_uc_lag_mean_s",
+      "Coefficient": 0.42359968109033713,
+      "Odds_Ratio": 1.5274500042565298,
+      "P_Value": 0.0017507946854846664
+    }
+  ]
+}
