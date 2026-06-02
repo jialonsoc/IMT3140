@@ -1,0 +1,4 @@
+Model,N_Features,Features,AUROC,AUPRC,Sensitivity,Specificity,Brier_Score
+Fase 1 univariado (fhr_baseline_std_bpm),1,fhr_baseline_std_bpm,0.7060817171907362,0.26480028389897287,0.7446808510638298,0.6017699115044248,0.10067832440185565
+Multivariado Forward AIC,11,"fhr_baseline_std_bpm, Deliv_type, accelerations_count, deceleration_uc_lag_mean_s, ltv_valid_windows, decelerations_count, Age, fhr_baseline_slope_bpm_min, fhr_baseline_median_bpm, accelerations_mean_duration_s, fhr_sampen",0.8450385991338731,0.5138612806110235,0.7446808510638298,0.7935103244837758,0.0812955895020048
+Multivariado Forward BIC,4,"fhr_baseline_std_bpm, Deliv_type, accelerations_count, deceleration_uc_lag_mean_s",0.8206238624239002,0.442117485156743,0.6382978723404256,0.8141592920353983,0.08785881933064738
