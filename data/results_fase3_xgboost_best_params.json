@@ -1,0 +1,28 @@
+{
+  "random_state": 42,
+  "search_scoring": "average_precision",
+  "n_iter_search": 30,
+  "best_cv_auprc": 0.25364092216311385,
+  "best_params": {
+    "xgb__subsample": 1.0,
+    "xgb__scale_pos_weight": 8.037777777777778,
+    "xgb__reg_lambda": 10.0,
+    "xgb__n_estimators": 100,
+    "xgb__min_child_weight": 1,
+    "xgb__max_depth": 2,
+    "xgb__learning_rate": 0.03,
+    "xgb__colsample_bytree": 0.85
+  },
+  "train_records": 386,
+  "test_records": 166,
+  "real_train_windows": 3295,
+  "real_test_windows": 1429,
+  "augmented_train_rows": 4067,
+  "synthetic_augmentation": {
+    "source_path": "data\\dataset_synthetic.csv",
+    "rows_added": 772,
+    "positive_rows_added": 94,
+    "negative_rows_added": 678,
+    "note": "Synthetic rows filtered to training source_record only."
+  }
+}

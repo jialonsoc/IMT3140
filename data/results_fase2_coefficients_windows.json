@@ -1,0 +1,355 @@
+{
+  "target_definition": "pH < 7.10 OR Apgar5 < 7 OR NICU_days > 0",
+  "split_level": "record",
+  "random_state": 42,
+  "train_records": 386,
+  "test_records": 166,
+  "train_windows": 3295,
+  "test_windows": 1429,
+  "aic_selection_order": [
+    {
+      "step": 1,
+      "feature": "Deliv_type",
+      "criterion_value": 2134.1222959798342,
+      "delta": 124.31356975536892
+    },
+    {
+      "step": 2,
+      "feature": "II_stage",
+      "criterion_value": 2027.1495347090017,
+      "delta": 106.9727612708325
+    },
+    {
+      "step": 3,
+      "feature": "fhr_baseline_std_bpm",
+      "criterion_value": 1996.935640072264,
+      "delta": 30.213894636737678
+    },
+    {
+      "step": 4,
+      "feature": "Age",
+      "criterion_value": 1975.7554062105262,
+      "delta": 21.18023386173786
+    },
+    {
+      "step": 5,
+      "feature": "Sex",
+      "criterion_value": 1961.6498364061035,
+      "delta": 14.105569804422657
+    },
+    {
+      "step": 6,
+      "feature": "Pyrexia",
+      "criterion_value": 1954.1403755664815,
+      "delta": 7.509460839622079
+    },
+    {
+      "step": 7,
+      "feature": "Diabetes",
+      "criterion_value": 1946.0439580765997,
+      "delta": 8.096417489881787
+    },
+    {
+      "step": 8,
+      "feature": "NoProgress",
+      "criterion_value": 1944.2109595342013,
+      "delta": 1.8329985423983999
+    },
+    {
+      "step": 9,
+      "feature": "accelerations_count",
+      "criterion_value": 1941.87852364373,
+      "delta": 2.332435890471288
+    },
+    {
+      "step": 10,
+      "feature": "ltv_valid_windows",
+      "criterion_value": 1935.6931900070078,
+      "delta": 6.1853336367221345
+    },
+    {
+      "step": 11,
+      "feature": "decelerations_count",
+      "criterion_value": 1927.1625756701355,
+      "delta": 8.530614336872304
+    },
+    {
+      "step": 12,
+      "feature": "uc_invalid_pct",
+      "criterion_value": 1924.1885932897367,
+      "delta": 2.9739823803988656
+    },
+    {
+      "step": 13,
+      "feature": "dfa_alpha_short",
+      "criterion_value": 1917.8217352523866,
+      "delta": 6.3668580373500845
+    },
+    {
+      "step": 14,
+      "feature": "fhr_invalid_pct",
+      "criterion_value": 1911.5998468677171,
+      "delta": 6.221888384669455
+    },
+    {
+      "step": 15,
+      "feature": "Weight_g",
+      "criterion_value": 1905.365118540906,
+      "delta": 6.234728326811137
+    },
+    {
+      "step": 16,
+      "feature": "fhr_sampen",
+      "criterion_value": 1898.7706877134865,
+      "delta": 6.594430827419501
+    },
+    {
+      "step": 17,
+      "feature": "Pos_IIst",
+      "criterion_value": 1896.6774988359566,
+      "delta": 2.093188877529883
+    },
+    {
+      "step": 18,
+      "feature": "CK_KP",
+      "criterion_value": 1893.6794057818897,
+      "delta": 2.998093054066885
+    },
+    {
+      "step": 19,
+      "feature": "uc_contractions_count",
+      "criterion_value": 1893.5914521033037,
+      "delta": 0.08795367858601821
+    },
+    {
+      "step": 20,
+      "feature": "Induced",
+      "criterion_value": 1892.0754332657243,
+      "delta": 1.516018837579395
+    }
+  ],
+  "bic_selection_order": [
+    {
+      "step": 1,
+      "feature": "Deliv_type",
+      "criterion_value": 2146.3226188737076,
+      "delta": 118.21340830843201
+    },
+    {
+      "step": 2,
+      "feature": "II_stage",
+      "criterion_value": 2045.4500190498115,
+      "delta": 100.87259982389605
+    },
+    {
+      "step": 3,
+      "feature": "fhr_baseline_std_bpm",
+      "criterion_value": 2021.3362858600105,
+      "delta": 24.113733189800996
+    },
+    {
+      "step": 4,
+      "feature": "Age",
+      "criterion_value": 2006.2562134452091,
+      "delta": 15.080072414801407
+    },
+    {
+      "step": 5,
+      "feature": "Sex",
+      "criterion_value": 1998.2508050877232,
+      "delta": 8.005408357485976
+    },
+    {
+      "step": 6,
+      "feature": "Pyrexia",
+      "criterion_value": 1996.8415056950378,
+      "delta": 1.4092993926853978
+    },
+    {
+      "step": 7,
+      "feature": "Diabetes",
+      "criterion_value": 1994.8452496520924,
+      "delta": 1.9962560429453333
+    }
+  ],
+  "aic_final_criterion": 1892.0754332657243,
+  "bic_final_criterion": 1994.8452496520924,
+  "aic_coefficients": [
+    {
+      "Feature": "Intercept",
+      "Coefficient": -9.256781258149267,
+      "Odds_Ratio": 9.546209902020527e-05,
+      "P_Value": 0.9999988020208783
+    },
+    {
+      "Feature": "Deliv_type",
+      "Coefficient": 1.2620078450458512,
+      "Odds_Ratio": 3.5325070984574545,
+      "P_Value": 7.960589712789231e-06
+    },
+    {
+      "Feature": "II_stage",
+      "Coefficient": 0.6902825133077024,
+      "Odds_Ratio": 1.9942788639834652,
+      "P_Value": 0.001350393887580254
+    },
+    {
+      "Feature": "fhr_baseline_std_bpm",
+      "Coefficient": 0.37128970496305697,
+      "Odds_Ratio": 1.4496029697354742,
+      "P_Value": 0.013909700419875732
+    },
+    {
+      "Feature": "Age",
+      "Coefficient": 0.2881981228432527,
+      "Odds_Ratio": 1.334021578091177,
+      "P_Value": 0.18695053091860403
+    },
+    {
+      "Feature": "Sex",
+      "Coefficient": -0.24408992779458125,
+      "Odds_Ratio": 0.7834171801157721,
+      "P_Value": 0.18461312415790987
+    },
+    {
+      "Feature": "Pyrexia",
+      "Coefficient": -58.89287831653564,
+      "Odds_Ratio": 2.6494023898698814e-26,
+      "P_Value": 0.9999992921185401
+    },
+    {
+      "Feature": "Diabetes",
+      "Coefficient": -0.26372865470181334,
+      "Odds_Ratio": 0.768181953940663,
+      "P_Value": 0.09765661813819453
+    },
+    {
+      "Feature": "NoProgress",
+      "Coefficient": 0.1996819527687538,
+      "Odds_Ratio": 1.2210143561630644,
+      "P_Value": 0.3037241261282817
+    },
+    {
+      "Feature": "accelerations_count",
+      "Coefficient": 0.10456905055063574,
+      "Odds_Ratio": 1.110232053354114,
+      "P_Value": 0.4623873671543286
+    },
+    {
+      "Feature": "ltv_valid_windows",
+      "Coefficient": 0.47778417832094405,
+      "Odds_Ratio": 1.6124974339230018,
+      "P_Value": 0.015819301264144752
+    },
+    {
+      "Feature": "decelerations_count",
+      "Coefficient": 0.3729337539111256,
+      "Odds_Ratio": 1.4519881481107435,
+      "P_Value": 0.10739712916426668
+    },
+    {
+      "Feature": "uc_invalid_pct",
+      "Coefficient": -0.17979627777137394,
+      "Odds_Ratio": 0.8354403918544266,
+      "P_Value": 0.1915056043666864
+    },
+    {
+      "Feature": "dfa_alpha_short",
+      "Coefficient": -0.14265493260488643,
+      "Odds_Ratio": 0.8670532090730395,
+      "P_Value": 0.3311201381205666
+    },
+    {
+      "Feature": "fhr_invalid_pct",
+      "Coefficient": 0.2709213654532782,
+      "Odds_Ratio": 1.3111719629177583,
+      "P_Value": 0.06880760049922868
+    },
+    {
+      "Feature": "Weight_g",
+      "Coefficient": -0.20929716692206668,
+      "Odds_Ratio": 0.8111541516415253,
+      "P_Value": 0.19829520805203726
+    },
+    {
+      "Feature": "fhr_sampen",
+      "Coefficient": 0.2504929382385781,
+      "Odds_Ratio": 1.284658517942022,
+      "P_Value": 0.17648876615767495
+    },
+    {
+      "Feature": "Pos_IIst",
+      "Coefficient": 0.5019871903111423,
+      "Odds_Ratio": 1.6520008511310313,
+      "P_Value": 0.088422999930454
+    },
+    {
+      "Feature": "CK_KP",
+      "Coefficient": -0.11168428490818483,
+      "Odds_Ratio": 0.8943265653272766,
+      "P_Value": 0.4332928175303389
+    },
+    {
+      "Feature": "uc_contractions_count",
+      "Coefficient": 0.08957287190951868,
+      "Odds_Ratio": 1.0937070309282546,
+      "P_Value": 0.5535477453884353
+    },
+    {
+      "Feature": "Induced",
+      "Coefficient": 0.12719949973625028,
+      "Odds_Ratio": 1.1356435557734514,
+      "P_Value": 0.5424212530388547
+    }
+  ],
+  "bic_coefficients": [
+    {
+      "Feature": "Intercept",
+      "Coefficient": -2.961219632466248,
+      "Odds_Ratio": 0.05175575566371907,
+      "P_Value": 0.9999997279833363
+    },
+    {
+      "Feature": "Deliv_type",
+      "Coefficient": 0.8126950952678961,
+      "Odds_Ratio": 2.253974484076227,
+      "P_Value": 9.136039889991913e-09
+    },
+    {
+      "Feature": "II_stage",
+      "Coefficient": 0.67936445056873,
+      "Odds_Ratio": 1.972623633923278,
+      "P_Value": 0.00011433539626988002
+    },
+    {
+      "Feature": "fhr_baseline_std_bpm",
+      "Coefficient": 0.29497318560244923,
+      "Odds_Ratio": 1.3430903440449917,
+      "P_Value": 0.0036397256569164114
+    },
+    {
+      "Feature": "Age",
+      "Coefficient": 0.30676974793546663,
+      "Odds_Ratio": 1.3590280130383312,
+      "P_Value": 0.13882153457375251
+    },
+    {
+      "Feature": "Sex",
+      "Coefficient": -0.21403224776307073,
+      "Odds_Ratio": 0.8073223502630293,
+      "P_Value": 0.2606687673598278
+    },
+    {
+      "Feature": "Pyrexia",
+      "Coefficient": -4.558712664996594,
+      "Odds_Ratio": 0.010475535790859903,
+      "P_Value": 0.9999999617652949
+    },
+    {
+      "Feature": "Diabetes",
+      "Coefficient": -0.23057532192554542,
+      "Odds_Ratio": 0.7940766213694691,
+      "P_Value": 0.13103354397711564
+    }
+  ]
+}

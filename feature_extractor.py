@@ -1,8 +1,10 @@
 """
-Feature extraction for CTG records.
+Feature extraction for CTG records and sliding windows.
 
 This module builds a tabular feature set from paired fetal heart rate (FHR)
-and uterine contraction (UC) time series stored as NumPy arrays.
+and uterine contraction (UC) time series stored as NumPy arrays. The default
+script entrypoint exports overlapping 20-minute windows with a 5-minute stride
+to support real-time monitoring experiments and reduce look-ahead bias.
 
 Optional install notes:
     pip install numpy pandas scipy tqdm
@@ -29,6 +31,10 @@ FS_DEFAULT = 4
 RAW_DIR = Path("data/raw")
 CLINICAL_METADATA_PATH = Path("data/clinical_metadata.csv")
 OUTPUT_PATH = Path("data/processed_features.csv")
+WINDOW_OUTPUT_PATH = Path("data/processed_features_windows.csv")
+WINDOW_LENGTH_MIN = 20.0
+WINDOW_STRIDE_MIN = 5.0
+MAX_INVALID_WINDOW_PCT = 30.0
 
 
 @dataclass(frozen=True)
@@ -525,6 +531,176 @@ def process_raw_folder(
     return pd.DataFrame(rows)
 
 
+def infer_birth_time_min(metadata_row: pd.Series, signal_samples: int, fs: int = FS_DEFAULT) -> float:
+    """
+    Infer birth time in minutes from record start.
+
+    In CTU-UHB, ``Sig2Birth`` is commonly interpreted as the interval from the
+    end of the signal to birth in seconds. In this local extraction it is 0 for
+    every record, so the signal end is treated as the birth time.
+    """
+    signal_duration_min = float(signal_samples / (fs * 60.0)) if signal_samples else np.nan
+    sig2birth_seconds = pd.to_numeric(metadata_row.get("Sig2Birth", np.nan), errors="coerce")
+    if np.isfinite(sig2birth_seconds) and float(sig2birth_seconds) > 0.0:
+        return signal_duration_min + float(sig2birth_seconds) / 60.0
+    return signal_duration_min
+
+
+def iter_window_bounds(
+    n_samples: int,
+    *,
+    fs: int = FS_DEFAULT,
+    window_length_min: float = WINDOW_LENGTH_MIN,
+    stride_min: float = WINDOW_STRIDE_MIN,
+) -> list[tuple[int, int]]:
+    """Return sample-index bounds for complete overlapping windows."""
+    window_samples = int(round(window_length_min * 60.0 * fs))
+    stride_samples = int(round(stride_min * 60.0 * fs))
+    if window_samples <= 0 or stride_samples <= 0:
+        raise ValueError("Window length and stride must be positive.")
+    if n_samples < window_samples:
+        return []
+    return [
+        (start, start + window_samples)
+        for start in range(0, n_samples - window_samples + 1, stride_samples)
+    ]
+
+
+def window_invalid_percentages(
+    fhr_window: np.ndarray,
+    uc_window: np.ndarray,
+) -> tuple[float, float]:
+    """
+    Estimate per-window invalid percentages after applying interpolation rules.
+
+    The returned percentages are the fraction of samples that needed correction
+    before interpolation. Windows above the configured threshold are discarded
+    before entropy and model features are computed.
+    """
+    _fhr_clean, fhr_invalid_pct = interpolate_missing(
+        fhr_window,
+        invalid_zero=True,
+        valid_min=50.0,
+        valid_max=240.0,
+    )
+    _uc_clean, uc_invalid_pct = interpolate_missing(
+        uc_window,
+        invalid_zero=True,
+        valid_min=0.0,
+        valid_max=150.0,
+    )
+    return fhr_invalid_pct, uc_invalid_pct
+
+
+def extract_windowed_features_for_record(
+    record: str,
+    fhr_signal: np.ndarray,
+    uc_signal: np.ndarray,
+    metadata_row: pd.Series,
+    *,
+    fs: int = FS_DEFAULT,
+    window_length_min: float = WINDOW_LENGTH_MIN,
+    stride_min: float = WINDOW_STRIDE_MIN,
+    max_invalid_pct: float = MAX_INVALID_WINDOW_PCT,
+) -> list[dict[str, Any]]:
+    """Extract feature rows for valid sliding windows from one CTG record."""
+    n_samples = min(len(fhr_signal), len(uc_signal))
+    fhr_signal = np.asarray(fhr_signal[:n_samples], dtype=np.float64)
+    uc_signal = np.asarray(uc_signal[:n_samples], dtype=np.float64)
+    birth_time_min = infer_birth_time_min(metadata_row, n_samples, fs=fs)
+    rows: list[dict[str, Any]] = []
+
+    for _raw_window_id, (start, end) in enumerate(
+        iter_window_bounds(
+            n_samples,
+            fs=fs,
+            window_length_min=window_length_min,
+            stride_min=stride_min,
+        )
+    ):
+        fhr_window = fhr_signal[start:end]
+        uc_window = uc_signal[start:end]
+        fhr_invalid_pct, uc_invalid_pct = window_invalid_percentages(fhr_window, uc_window)
+        if fhr_invalid_pct > max_invalid_pct or uc_invalid_pct > max_invalid_pct:
+            continue
+
+        features = extract_features_from_record(fhr_window, uc_window, fs=fs)
+        window_end_min = float(end / (fs * 60.0))
+        features.update(
+            {
+                "record": int(record) if str(record).isdigit() else record,
+                "window_id": len(rows),
+                "window_start_min": float(start / (fs * 60.0)),
+                "window_end_min": window_end_min,
+                "time_to_birth_min": float(birth_time_min - window_end_min),
+            }
+        )
+        rows.append(features)
+
+    return rows
+
+
+def _estimate_total_windows(raw_dir: Path, fs: int = FS_DEFAULT) -> int:
+    """Estimate total complete windows for progress reporting."""
+    total = 0
+    for fhr_path in raw_dir.glob("*_fhr.npy"):
+        try:
+            n_samples = int(np.load(fhr_path, mmap_mode="r").shape[0])
+        except Exception:
+            continue
+        total += len(iter_window_bounds(n_samples, fs=fs))
+    return total
+
+
+def process_raw_folder_windows(
+    raw_dir: Path = RAW_DIR,
+    clinical_metadata_path: Path = CLINICAL_METADATA_PATH,
+    *,
+    fs: int = FS_DEFAULT,
+    window_length_min: float = WINDOW_LENGTH_MIN,
+    stride_min: float = WINDOW_STRIDE_MIN,
+    max_invalid_pct: float = MAX_INVALID_WINDOW_PCT,
+) -> pd.DataFrame:
+    """Process every paired FHR/UC record into valid overlapping window rows."""
+    clinical_df = pd.read_csv(clinical_metadata_path)
+    if "record" not in clinical_df.columns:
+        raise KeyError(f"'record' column not found in {clinical_metadata_path}")
+    metadata_by_record = clinical_df.set_index(clinical_df["record"].astype(str), drop=False)
+
+    fhr_paths = sorted(raw_dir.glob("*_fhr.npy"))
+    if not fhr_paths:
+        raise FileNotFoundError(f"No *_fhr.npy files found in {raw_dir}")
+
+    rows: list[dict[str, Any]] = []
+    total_windows = _estimate_total_windows(raw_dir, fs=fs)
+    with tqdm(total=total_windows, desc="Extracting CTG windows") as progress:
+        for fhr_path in fhr_paths:
+            record = _record_id_from_fhr_path(fhr_path)
+            uc_path = raw_dir / f"{record}_uc.npy"
+            if not uc_path.exists():
+                raise FileNotFoundError(f"Missing paired UC file for record {record}: {uc_path}")
+            if record not in metadata_by_record.index:
+                raise KeyError(f"Record {record} not found in {clinical_metadata_path}")
+
+            fhr_signal = np.load(fhr_path)
+            uc_signal = np.load(uc_path)
+            n_samples = min(len(fhr_signal), len(uc_signal))
+            record_windows = extract_windowed_features_for_record(
+                record,
+                fhr_signal,
+                uc_signal,
+                metadata_by_record.loc[record],
+                fs=fs,
+                window_length_min=window_length_min,
+                stride_min=stride_min,
+                max_invalid_pct=max_invalid_pct,
+            )
+            rows.extend(record_windows)
+            progress.update(len(iter_window_bounds(n_samples, fs=fs)))
+
+    return pd.DataFrame(rows)
+
+
 def build_processed_dataset(
     raw_dir: Path = RAW_DIR,
     clinical_metadata_path: Path = CLINICAL_METADATA_PATH,
@@ -550,10 +726,49 @@ def build_processed_dataset(
     return dataset
 
 
+def build_processed_windowed_dataset(
+    raw_dir: Path = RAW_DIR,
+    clinical_metadata_path: Path = CLINICAL_METADATA_PATH,
+    output_path: Path = WINDOW_OUTPUT_PATH,
+    *,
+    fs: int = FS_DEFAULT,
+    window_length_min: float = WINDOW_LENGTH_MIN,
+    stride_min: float = WINDOW_STRIDE_MIN,
+    max_invalid_pct: float = MAX_INVALID_WINDOW_PCT,
+) -> pd.DataFrame:
+    """
+    Extract valid sliding-window features, merge clinical metadata and save CSV.
+
+    Each output row is one valid window. Clinical metadata is repeated across
+    windows from the same ``record`` only to support target reconstruction and
+    downstream adjustment; modeling scripts exclude direct outcome columns.
+    """
+    feature_df = process_raw_folder_windows(
+        raw_dir,
+        clinical_metadata_path,
+        fs=fs,
+        window_length_min=window_length_min,
+        stride_min=stride_min,
+        max_invalid_pct=max_invalid_pct,
+    )
+    clinical_df = pd.read_csv(clinical_metadata_path)
+    if "record" not in clinical_df.columns:
+        raise KeyError(f"'record' column not found in {clinical_metadata_path}")
+    if feature_df.empty:
+        raise RuntimeError("No valid windows were extracted.")
+
+    clinical_df["record"] = clinical_df["record"].astype(feature_df["record"].dtype)
+    dataset = clinical_df.merge(feature_df, on="record", how="inner", validate="one_to_many")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    dataset.to_csv(output_path, index=False)
+    return dataset
+
+
 def main() -> None:
-    """Run the complete extraction pipeline for the original CTG records."""
-    dataset = build_processed_dataset()
-    print(f"Saved {dataset.shape[0]} rows x {dataset.shape[1]} columns to {OUTPUT_PATH}")
+    """Run the sliding-window extraction pipeline for original CTG records."""
+    dataset = build_processed_windowed_dataset()
+    print(f"Saved {dataset.shape[0]} rows x {dataset.shape[1]} columns to {WINDOW_OUTPUT_PATH}")
 
 
 if __name__ == "__main__":

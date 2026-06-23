@@ -1,0 +1,53 @@
+{
+  "random_state": 42,
+  "n_iter_search": 30,
+  "min_recall_for_threshold": 0.75,
+  "train_records": 386,
+  "test_records": 166,
+  "train_windows": 3295,
+  "test_windows": 1429,
+  "trend_features": [
+    "delta_baseline_std_bpm",
+    "delta_sampen",
+    "fhr_std_falling_streak",
+    "fhr_sampen_falling_streak",
+    "slope_sampen_30min",
+    "slope_baseline_mean_30min"
+  ],
+  "models": [
+    {
+      "model": "XGBoost sequential real-only",
+      "best_params": {
+        "xgb__subsample": 1.0,
+        "xgb__scale_pos_weight": 8.25561797752809,
+        "xgb__reg_lambda": 10.0,
+        "xgb__n_estimators": 100,
+        "xgb__min_child_weight": 1,
+        "xgb__max_depth": 2,
+        "xgb__learning_rate": 0.03,
+        "xgb__colsample_bytree": 0.85
+      },
+      "best_cv_auprc": 0.26586421151139,
+      "oof_auprc": 0.23372842400070937,
+      "threshold": 0.3250958323478699,
+      "synthetic_note": "Only real training windows."
+    },
+    {
+      "model": "XGBoost sequential real+synthetic",
+      "best_params": {
+        "xgb__subsample": 0.85,
+        "xgb__scale_pos_weight": 8.037777777777778,
+        "xgb__reg_lambda": 10.0,
+        "xgb__n_estimators": 500,
+        "xgb__min_child_weight": 1,
+        "xgb__max_depth": 4,
+        "xgb__learning_rate": 0.05,
+        "xgb__colsample_bytree": 0.7
+      },
+      "best_cv_auprc": 0.7517530234069307,
+      "oof_auprc": 0.7492383146450481,
+      "threshold": 0.27432936429977417,
+      "synthetic_note": "Synthetic rows filtered to train source_record only. Current synthetic data is full-record, so sequential trend features are 0 within each one-row simulation."
+    }
+  ]
+}
