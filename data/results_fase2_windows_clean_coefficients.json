@@ -1,0 +1,374 @@
+{
+  "trend_features_available": [
+    "delta_baseline_std_bpm",
+    "delta_sampen",
+    "fhr_std_falling_streak",
+    "fhr_sampen_falling_streak",
+    "slope_sampen_30min",
+    "slope_baseline_mean_30min"
+  ],
+  "models": {
+    "AIC": {
+      "selection_order": [
+        {
+          "step": 1,
+          "feature": "fhr_baseline_std_bpm",
+          "criterion_value": 2228.3141649142917,
+          "delta": 30.12170082091143
+        },
+        {
+          "step": 2,
+          "feature": "Age",
+          "criterion_value": 2210.9580019266414,
+          "delta": 17.35616298765035
+        },
+        {
+          "step": 3,
+          "feature": "Parity",
+          "criterion_value": 2194.074973413215,
+          "delta": 16.883028513426325
+        },
+        {
+          "step": 4,
+          "feature": "Sex",
+          "criterion_value": 2176.6601444237685,
+          "delta": 17.414828989446505
+        },
+        {
+          "step": 5,
+          "feature": "Diabetes",
+          "criterion_value": 2169.492934294249,
+          "delta": 7.16721012951939
+        },
+        {
+          "step": 6,
+          "feature": "fhr_sampen",
+          "criterion_value": 2164.3449843209155,
+          "delta": 5.1479499733336525
+        },
+        {
+          "step": 7,
+          "feature": "fhr_invalid_pct",
+          "criterion_value": 2155.366351655085,
+          "delta": 8.978632665830446
+        },
+        {
+          "step": 8,
+          "feature": "Pyrexia",
+          "criterion_value": 2149.858694312129,
+          "delta": 5.5076573429560085
+        },
+        {
+          "step": 9,
+          "feature": "fhr_baseline_median_bpm",
+          "criterion_value": 2144.3876144424034,
+          "delta": 5.4710798697256
+        },
+        {
+          "step": 10,
+          "feature": "uc_invalid_pct",
+          "criterion_value": 2141.0275601759786,
+          "delta": 3.360054266424868
+        },
+        {
+          "step": 11,
+          "feature": "dfa_alpha_short",
+          "criterion_value": 2135.60572783359,
+          "delta": 5.42183234238837
+        },
+        {
+          "step": 12,
+          "feature": "slope_sampen_30min",
+          "criterion_value": 2132.9805221737797,
+          "delta": 2.62520565981049
+        },
+        {
+          "step": 13,
+          "feature": "decelerations_mean_duration_s",
+          "criterion_value": 2130.684347169755,
+          "delta": 2.296175004024917
+        },
+        {
+          "step": 14,
+          "feature": "accelerations_count",
+          "criterion_value": 2127.710474474792,
+          "delta": 2.9738726949626653
+        },
+        {
+          "step": 15,
+          "feature": "decelerations_count",
+          "criterion_value": 2125.2666869751956,
+          "delta": 2.4437874995965103
+        },
+        {
+          "step": 16,
+          "feature": "dfa_alpha",
+          "criterion_value": 2122.1689495928276,
+          "delta": 3.0977373823679955
+        },
+        {
+          "step": 17,
+          "feature": "fhr_sampen_falling_streak",
+          "criterion_value": 2121.4061662266286,
+          "delta": 0.7627833661990735
+        },
+        {
+          "step": 18,
+          "feature": "delta_sampen",
+          "criterion_value": 2116.395128112087,
+          "delta": 5.011038114541407
+        },
+        {
+          "step": 19,
+          "feature": "ltv_valid_windows",
+          "criterion_value": 2112.3948347060095,
+          "delta": 4.000293406077617
+        },
+        {
+          "step": 20,
+          "feature": "ltv_mean_amp_bpm",
+          "criterion_value": 2108.8639422090596,
+          "delta": 3.530892496949946
+        },
+        {
+          "step": 21,
+          "feature": "Gravidity",
+          "criterion_value": 2107.7797882570812,
+          "delta": 1.084153951978351
+        },
+        {
+          "step": 22,
+          "feature": "Gest_weeks",
+          "criterion_value": 2106.452939474286,
+          "delta": 1.3268487827954232
+        },
+        {
+          "step": 23,
+          "feature": "delta_baseline_std_bpm",
+          "criterion_value": 2105.1582808225503,
+          "delta": 1.2946586517355172
+        }
+      ],
+      "final_criterion": 2105.1582808225503,
+      "coefficients": [
+        {
+          "Feature": "Intercept",
+          "Coefficient": -2.973232103796974,
+          "Odds_Ratio": 0.05113776038921522,
+          "P_Value": 0.999999600365094
+        },
+        {
+          "Feature": "fhr_baseline_std_bpm",
+          "Coefficient": 0.3557972522314627,
+          "Odds_Ratio": 1.4273181333591918,
+          "P_Value": 0.03843449884338953
+        },
+        {
+          "Feature": "Age",
+          "Coefficient": 0.4118721733206824,
+          "Odds_Ratio": 1.5096414515409946,
+          "P_Value": 0.05199412842843754
+        },
+        {
+          "Feature": "Parity",
+          "Coefficient": -0.41518893169175114,
+          "Odds_Ratio": 0.6602155332833597,
+          "P_Value": 0.07876249611033827
+        },
+        {
+          "Feature": "Sex",
+          "Coefficient": -0.23047051611578845,
+          "Odds_Ratio": 0.7941598495741042,
+          "P_Value": 0.21138408752947024
+        },
+        {
+          "Feature": "Diabetes",
+          "Coefficient": -0.24906775511261092,
+          "Odds_Ratio": 0.7795271546452045,
+          "P_Value": 0.20392426213819037
+        },
+        {
+          "Feature": "fhr_sampen",
+          "Coefficient": 0.3226371523408294,
+          "Odds_Ratio": 1.3807642529229733,
+          "P_Value": 0.14721125494103085
+        },
+        {
+          "Feature": "fhr_invalid_pct",
+          "Coefficient": 0.2697177101180441,
+          "Odds_Ratio": 1.3095947132121193,
+          "P_Value": 0.05439268785788771
+        },
+        {
+          "Feature": "Pyrexia",
+          "Coefficient": -5.645762728785535,
+          "Odds_Ratio": 0.0035324530697070926,
+          "P_Value": 0.9999999388085489
+        },
+        {
+          "Feature": "fhr_baseline_median_bpm",
+          "Coefficient": 0.23703505226563798,
+          "Odds_Ratio": 1.2674855452366613,
+          "P_Value": 0.25919170777164124
+        },
+        {
+          "Feature": "uc_invalid_pct",
+          "Coefficient": -0.14152628045966323,
+          "Odds_Ratio": 0.8680323629956284,
+          "P_Value": 0.2632818385549772
+        },
+        {
+          "Feature": "dfa_alpha_short",
+          "Coefficient": -0.23467247600189972,
+          "Odds_Ratio": 0.7908298229618632,
+          "P_Value": 0.11224558647870636
+        },
+        {
+          "Feature": "slope_sampen_30min",
+          "Coefficient": -0.15249600770522298,
+          "Odds_Ratio": 0.8585623215834248,
+          "P_Value": 0.05634575111761251
+        },
+        {
+          "Feature": "decelerations_mean_duration_s",
+          "Coefficient": -0.24606722186056743,
+          "Odds_Ratio": 0.7818696644253259,
+          "P_Value": 0.11753210283846956
+        },
+        {
+          "Feature": "accelerations_count",
+          "Coefficient": 0.05959425605507727,
+          "Odds_Ratio": 1.0614058001883737,
+          "P_Value": 0.6266058025843781
+        },
+        {
+          "Feature": "decelerations_count",
+          "Coefficient": 0.32858863720441184,
+          "Odds_Ratio": 1.3890063525118592,
+          "P_Value": 0.15858855628151014
+        },
+        {
+          "Feature": "dfa_alpha",
+          "Coefficient": 0.16142077483354253,
+          "Odds_Ratio": 1.1751793506905208,
+          "P_Value": 0.29932562973136867
+        },
+        {
+          "Feature": "fhr_sampen_falling_streak",
+          "Coefficient": -0.18214277889476388,
+          "Odds_Ratio": 0.8334823282340931,
+          "P_Value": 0.03204427849669773
+        },
+        {
+          "Feature": "delta_sampen",
+          "Coefficient": -0.2532163124725093,
+          "Odds_Ratio": 0.7762999403009744,
+          "P_Value": 0.0042555332679517785
+        },
+        {
+          "Feature": "ltv_valid_windows",
+          "Coefficient": 0.282897763335102,
+          "Odds_Ratio": 1.326969489946882,
+          "P_Value": 0.1865943999616535
+        },
+        {
+          "Feature": "ltv_mean_amp_bpm",
+          "Coefficient": 0.17530626909341637,
+          "Odds_Ratio": 1.1916111143867587,
+          "P_Value": 0.18079057590119196
+        },
+        {
+          "Feature": "Gravidity",
+          "Coefficient": 0.15017711660128596,
+          "Odds_Ratio": 1.1620400410852276,
+          "P_Value": 0.38221864563496055
+        },
+        {
+          "Feature": "Gest_weeks",
+          "Coefficient": -0.11873046488610368,
+          "Odds_Ratio": 0.8880471283907975,
+          "P_Value": 0.4459878295790328
+        },
+        {
+          "Feature": "delta_baseline_std_bpm",
+          "Coefficient": -0.13124352817344276,
+          "Odds_Ratio": 0.8770041731587492,
+          "P_Value": 0.10823555111202089
+        }
+      ]
+    },
+    "BIC": {
+      "selection_order": [
+        {
+          "step": 1,
+          "feature": "fhr_baseline_std_bpm",
+          "criterion_value": 2240.514487808165,
+          "delta": 24.02153937397452
+        },
+        {
+          "step": 2,
+          "feature": "Age",
+          "criterion_value": 2229.258486267451,
+          "delta": 11.256001540713896
+        },
+        {
+          "step": 3,
+          "feature": "Parity",
+          "criterion_value": 2218.4756192009613,
+          "delta": 10.782867066489871
+        },
+        {
+          "step": 4,
+          "feature": "Sex",
+          "criterion_value": 2207.1609516584517,
+          "delta": 11.314667542509596
+        },
+        {
+          "step": 5,
+          "feature": "Diabetes",
+          "criterion_value": 2206.093902975869,
+          "delta": 1.0670486825829357
+        }
+      ],
+      "final_criterion": 2206.093902975869,
+      "coefficients": [
+        {
+          "Feature": "Intercept",
+          "Coefficient": -2.2352797783242213,
+          "Odds_Ratio": 0.10696219996138201,
+          "P_Value": 7.593688454794545e-32
+        },
+        {
+          "Feature": "fhr_baseline_std_bpm",
+          "Coefficient": 0.2850995042059,
+          "Odds_Ratio": 1.329894351619381,
+          "P_Value": 0.002345436121436615
+        },
+        {
+          "Feature": "Age",
+          "Coefficient": 0.3980142856933373,
+          "Odds_Ratio": 1.488865299228439,
+          "P_Value": 0.05825059121995129
+        },
+        {
+          "Feature": "Parity",
+          "Coefficient": -0.32696415429464293,
+          "Odds_Ratio": 0.7211095912452684,
+          "P_Value": 0.12690718089199926
+        },
+        {
+          "Feature": "Sex",
+          "Coefficient": -0.24252145269903638,
+          "Odds_Ratio": 0.7846469146040579,
+          "P_Value": 0.17618164232049294
+        },
+        {
+          "Feature": "Diabetes",
+          "Coefficient": -0.20422024563262117,
+          "Odds_Ratio": 0.8152827889383008,
+          "P_Value": 0.24728904428341414
+        }
+      ]
+    }
+  }
+}
