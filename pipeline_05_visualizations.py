@@ -38,11 +38,14 @@ from pipeline_04_fase3_advanced import (  # noqa: E402
 
 FINAL_REPORT_PATH = Path("data/final_comparative_report.csv")
 BEST_PARAMS_PATH = Path("data/fase3_exploration_best_params.json")
+IMPORTANCE_PATH = Path("data/fase3_exploration_feature_importance.csv")
 OUTPUT_DIR = Path("output_plots")
 
 PLOT_01_PATH = OUTPUT_DIR / "plot_01_comparativa_auroc_auprc.png"
 PLOT_02_PATH = OUTPUT_DIR / "plot_02_tradeoff_clinico.png"
 PLOT_03_PATH = OUTPUT_DIR / "plot_03_perfil_alerta_temprana.png"
+PLOT_04_PATH = OUTPUT_DIR / "plot_04_perfil_caso_sano.png"
+PLOT_05_PATH = OUTPUT_DIR / "plot_05_importancia_xgboost_ganador.png"
 
 WINNING_MODEL = "XGBoost - Sequential real+synthetic"
 TARGET_EARLY_WARNING_MIN = 50.0
@@ -58,13 +61,15 @@ MODEL_LABELS = {
 
 
 @dataclass(frozen=True)
-class WinnerCurve:
-    """Predicted chronological risk curve for one positive test patient."""
+class RiskCurve:
+    """Predicted chronological risk curve for one real test patient."""
 
     record: int
     threshold: float
-    early_warning_min: float
     curve: pd.DataFrame
+    target: int
+    alert_start_index: int | None
+    early_warning_min: float | None
 
 
 def configure_style() -> None:
@@ -258,19 +263,19 @@ def _load_winning_model_config() -> tuple[list[str], dict[str, Any], float]:
     raise ValueError(f"No se encontro el modelo ganador en {BEST_PARAMS_PATH}: {WINNING_MODEL}")
 
 
-def _persistent_alert_start(group: pd.DataFrame) -> float | None:
-    """Return time-to-birth at the first point of the final persistent alert suffix."""
+def _persistent_alert_start_index(group: pd.DataFrame) -> int | None:
+    """Return row index of the first point of the final persistent alert suffix."""
     alerts = group["alert"].to_numpy(dtype=bool)
     if alerts.size == 0 or not alerts[-1]:
         return None
     start = alerts.size - 1
     while start > 0 and alerts[start - 1]:
         start -= 1
-    return float(group.iloc[start]["time_to_birth_min"])
+    return int(start)
 
 
-def reconstruct_winning_xgb_curve() -> WinnerCurve:
-    """Fit the winning XGBoost and extract a real positive test-patient curve."""
+def fit_winning_xgb_predictions() -> tuple[pd.DataFrame, float]:
+    """Fit the winning XGBoost and return probabilities for real test windows."""
     features, best_params, threshold = _load_winning_model_config()
     real_df = load_real_windows()
     synthetic_df = load_synthetic_windows()
@@ -295,35 +300,100 @@ def reconstruct_winning_xgb_curve() -> WinnerCurve:
     test_ordered = split.test_df.sort_values(["record", "window_start_min"]).copy()
     test_ordered["probability"] = estimator.predict_proba(test_ordered[selected_features])[:, 1]
     test_ordered["alert"] = test_ordered["probability"] >= threshold
+    return test_ordered, threshold
 
-    candidates: list[tuple[float, int, pd.DataFrame]] = []
-    for record, group in test_ordered.groupby("record", sort=False):
+
+def select_positive_transition_curve(test_predictions: pd.DataFrame, threshold: float) -> RiskCurve:
+    """Select a positive patient with a visible transition from no alert to persistent alert."""
+    persistent_candidates: list[tuple[float, int, int, pd.DataFrame]] = []
+    fallback_candidates: list[tuple[int, int, pd.DataFrame]] = []
+
+    for record, group in test_predictions.groupby("record", sort=False):
         if int(group["target"].max()) != 1:
             continue
         group = group.sort_values("window_start_min").copy()
-        early_warning = _persistent_alert_start(group)
-        if early_warning is not None:
-            candidates.append((abs(early_warning - TARGET_EARLY_WARNING_MIN), int(record), group))
+        persistent_start = _persistent_alert_start_index(group)
+        alerts = group["alert"].to_numpy(dtype=bool)
 
-    if not candidates:
-        positives_df = test_ordered[test_ordered["target"] == 1].copy()
-        if positives_df.empty:
-            raise RuntimeError("No hay pacientes positivos en el set de test.")
-        record = int(positives_df.groupby("record")["probability"].max().idxmax())
-        group = positives_df[positives_df["record"] == record].sort_values("window_start_min").copy()
-        early_warning = float(group.loc[group["probability"].idxmax(), "time_to_birth_min"])
-        return WinnerCurve(record=record, threshold=threshold, early_warning_min=early_warning, curve=group)
+        if persistent_start is not None:
+            early_warning = float(group.iloc[persistent_start]["time_to_birth_min"])
+            has_visible_transition = persistent_start > 0 and not bool(alerts[persistent_start - 1])
+            if has_visible_transition:
+                persistent_candidates.append(
+                    (abs(early_warning - TARGET_EARLY_WARNING_MIN), int(record), persistent_start, group)
+                )
+            else:
+                fallback_candidates.append((int(record), persistent_start, group))
+            continue
 
-    _, record, curve = sorted(candidates, key=lambda item: (item[0], item[1]))[0]
-    early_warning = float(_persistent_alert_start(curve))
-    return WinnerCurve(record=record, threshold=threshold, early_warning_min=early_warning, curve=curve)
+        alert_indices = np.flatnonzero(alerts)
+        if alert_indices.size and alert_indices[0] > 0:
+            fallback_candidates.append((int(record), int(alert_indices[0]), group))
+
+    if persistent_candidates:
+        _, record, start_idx, curve = sorted(persistent_candidates, key=lambda item: (item[0], item[1]))[0]
+        early_warning = float(curve.iloc[start_idx]["time_to_birth_min"])
+        return RiskCurve(record, threshold, curve, target=1, alert_start_index=start_idx, early_warning_min=early_warning)
+
+    if fallback_candidates:
+        record, start_idx, curve = sorted(fallback_candidates, key=lambda item: item[0])[0]
+        early_warning = float(curve.iloc[start_idx]["time_to_birth_min"])
+        return RiskCurve(record, threshold, curve, target=1, alert_start_index=start_idx, early_warning_min=early_warning)
+
+    positives_df = test_predictions[test_predictions["target"] == 1].copy()
+    if positives_df.empty:
+        raise RuntimeError("No hay pacientes positivos en el set de test.")
+    record = int(positives_df.groupby("record")["probability"].max().idxmax())
+    curve = positives_df[positives_df["record"] == record].sort_values("window_start_min").copy()
+    start_idx = int(curve["probability"].to_numpy().argmax())
+    early_warning = float(curve.iloc[start_idx]["time_to_birth_min"])
+    return RiskCurve(record, threshold, curve, target=1, alert_start_index=start_idx, early_warning_min=early_warning)
 
 
-def plot_early_warning_profile(curve: WinnerCurve) -> Path:
-    """Plot a chronological live-monitoring risk profile for one test patient."""
-    data = curve.curve.sort_values("time_to_birth_min", ascending=False).copy()
-    x = data["time_to_birth_min"].to_numpy(dtype=float)
+def select_healthy_curve(test_predictions: pd.DataFrame, threshold: float) -> RiskCurve:
+    """Select a real negative test patient, preferring a case without any alert."""
+    no_alert_candidates: list[tuple[float, int, pd.DataFrame]] = []
+    fallback_candidates: list[tuple[int, int, pd.DataFrame]] = []
+
+    for record, group in test_predictions.groupby("record", sort=False):
+        if int(group["target"].max()) != 0:
+            continue
+        group = group.sort_values("window_start_min").copy()
+        alerts = group["alert"].to_numpy(dtype=bool)
+        if not alerts.any():
+            no_alert_candidates.append((float(group["probability"].max()), int(record), group))
+        else:
+            fallback_candidates.append((int(alerts.sum()), int(record), group))
+
+    if no_alert_candidates:
+        _, record, curve = sorted(no_alert_candidates, key=lambda item: (-item[0], item[1]))[0]
+        return RiskCurve(record, threshold, curve, target=0, alert_start_index=None, early_warning_min=None)
+    if fallback_candidates:
+        _, record, curve = sorted(fallback_candidates, key=lambda item: (item[0], item[1]))[0]
+        first_alert = int(np.flatnonzero(curve["alert"].to_numpy(dtype=bool))[0])
+        return RiskCurve(record, threshold, curve, target=0, alert_start_index=first_alert, early_warning_min=None)
+    raise RuntimeError("No hay pacientes sanos en el set de test.")
+
+
+def _add_elapsed_axis(data: pd.DataFrame) -> tuple[pd.DataFrame, float]:
+    """Add chronological elapsed minutes and estimate birth time from each window."""
+    result = data.sort_values("window_start_min").copy()
+    result["elapsed_min"] = result["window_end_min"].astype(float)
+    birth_estimates = result["window_end_min"].astype(float) + result["time_to_birth_min"].astype(float)
+    birth_min = float(np.nanmedian(birth_estimates))
+    if not np.isfinite(birth_min):
+        birth_min = float(result["window_end_min"].max())
+    return result, birth_min
+
+
+def plot_early_warning_profile(curve: RiskCurve) -> Path:
+    """Plot the positive live-monitoring profile from monitoring start to birth."""
+    data, birth_min = _add_elapsed_axis(curve.curve)
+    x = data["elapsed_min"].to_numpy(dtype=float)
     y = data["probability"].to_numpy(dtype=float)
+    alert_elapsed = (
+        float(data.iloc[curve.alert_start_index]["elapsed_min"]) if curve.alert_start_index is not None else np.nan
+    )
 
     fig, (ax_top, ax_prob) = plt.subplots(
         2,
@@ -334,21 +404,22 @@ def plot_early_warning_profile(curve: WinnerCurve) -> Path:
         constrained_layout=True,
     )
 
-    ax_top.plot([x.max(), 0.0], [1.0, 1.0], color="#64748b", linewidth=5, solid_capstyle="round")
-    ax_top.scatter([x.max()], [1], s=95, color="#0f766e", zorder=3)
-    ax_top.scatter([0], [1], s=105, color="#b91c1c", zorder=3)
-    ax_top.axvline(curve.early_warning_min, color="#ea580c", linestyle="--", linewidth=1.5)
-    ax_top.text(x.max(), 1.10, "Inicio monitorizacion", ha="left", va="bottom", fontsize=9)
-    ax_top.text(0, 1.10, "Parto", ha="right", va="bottom", fontsize=9, color="#7f1d1d")
-    ax_top.text(
-        curve.early_warning_min,
-        0.84,
-        f"Alerta persistente\n{curve.early_warning_min:.0f} min",
-        ha="center",
-        va="top",
-        fontsize=9,
-        color="#9a3412",
-    )
+    ax_top.plot([0.0, birth_min], [1.0, 1.0], color="#64748b", linewidth=5, solid_capstyle="round")
+    ax_top.scatter([0.0], [1], s=95, color="#0f766e", zorder=3)
+    ax_top.scatter([birth_min], [1], s=105, color="#b91c1c", zorder=3)
+    if np.isfinite(alert_elapsed):
+        ax_top.axvline(alert_elapsed, color="#ea580c", linestyle="--", linewidth=1.5)
+        ax_top.text(
+            alert_elapsed,
+            0.84,
+            f"Inicio alerta\nEWT {curve.early_warning_min:.0f} min",
+            ha="center",
+            va="top",
+            fontsize=9,
+            color="#9a3412",
+        )
+    ax_top.text(0.0, 1.10, "Inicio monitoreo", ha="left", va="bottom", fontsize=9)
+    ax_top.text(birth_min, 1.10, "Parto", ha="right", va="bottom", fontsize=9, color="#7f1d1d")
     ax_top.set_yticks([])
     ax_top.set_ylabel("Linea temporal")
     ax_top.set_title(f"Perfil de alerta temprana en simulacion en vivo - registro {curve.record}")
@@ -357,30 +428,29 @@ def plot_early_warning_profile(curve: WinnerCurve) -> Path:
     ax_prob.plot(x, y, color="#155e75", linewidth=2.3, marker="o", markersize=3.8)
     ax_prob.fill_between(x, y, curve.threshold, where=y >= curve.threshold, color="#f97316", alpha=0.22)
     ax_prob.axhline(curve.threshold, color="#b91c1c", linestyle="--", linewidth=1.4)
-    ax_prob.axvline(curve.early_warning_min, color="#ea580c", linestyle="--", linewidth=1.5)
-    ax_prob.annotate(
-        f"Early Warning Time: {curve.early_warning_min:.0f} min",
-        xy=(curve.early_warning_min, curve.threshold),
-        xytext=(
-            max(float(x.min()) + 2.0, curve.early_warning_min - 18.0),
-            min(0.98, max(float(y.max()), curve.threshold) + 0.08),
-        ),
-        arrowprops={"arrowstyle": "->", "color": "#9a3412", "lw": 1.5},
-        color="#9a3412",
-        fontsize=10,
-        fontweight="bold",
-    )
+    if np.isfinite(alert_elapsed):
+        ax_prob.axvline(alert_elapsed, color="#ea580c", linestyle="--", linewidth=1.5)
+        ax_prob.annotate(
+            f"Cruza el umbral y queda en alarma\n{curve.early_warning_min:.0f} min antes del parto",
+            xy=(alert_elapsed, curve.threshold),
+            xytext=(min(birth_min - 3.0, alert_elapsed + 10.0), min(0.98, max(float(y.max()), curve.threshold) + 0.08)),
+            arrowprops={"arrowstyle": "->", "color": "#9a3412", "lw": 1.5},
+            color="#9a3412",
+            fontsize=10,
+            fontweight="bold",
+        )
     ax_prob.text(
-        x.min() + 1.5,
+        birth_min - 2.0,
         curve.threshold + 0.01,
         f"Umbral XGBoost = {curve.threshold:.4f}",
+        ha="right",
         color="#7f1d1d",
         fontsize=9,
     )
-    ax_prob.set_xlabel("Minutos antes del parto")
+    ax_prob.set_xlabel("Minutos desde el inicio del monitoreo")
     ax_prob.set_ylabel("Probabilidad estimada de asfixia")
     ax_prob.set_ylim(0.0, min(1.0, max(0.18, float(y.max()) + 0.12)))
-    ax_prob.invert_xaxis()
+    ax_prob.set_xlim(0.0, birth_min)
     sns.despine(ax=ax_prob)
 
     fig.savefig(PLOT_03_PATH, bbox_inches="tight")
@@ -388,16 +458,104 @@ def plot_early_warning_profile(curve: WinnerCurve) -> Path:
     return PLOT_03_PATH
 
 
+def plot_healthy_profile(curve: RiskCurve) -> Path:
+    """Plot a real healthy test-patient profile."""
+    data, birth_min = _add_elapsed_axis(curve.curve)
+    x = data["elapsed_min"].to_numpy(dtype=float)
+    y = data["probability"].to_numpy(dtype=float)
+
+    fig, ax = plt.subplots(figsize=(12.2, 5.6))
+    ax.plot(x, y, color="#2563eb", linewidth=2.3, marker="o", markersize=3.8)
+    ax.fill_between(x, 0.0, y, color="#60a5fa", alpha=0.16)
+    ax.axhline(curve.threshold, color="#b91c1c", linestyle="--", linewidth=1.4)
+    ax.scatter([birth_min], [0.0], s=90, color="#b91c1c", zorder=3)
+    ax.text(birth_min, 0.012, "Parto", ha="right", va="bottom", color="#7f1d1d", fontsize=9)
+    ax.text(
+        birth_min - 2.0,
+        curve.threshold + 0.01,
+        f"Umbral XGBoost = {curve.threshold:.4f}",
+        ha="right",
+        color="#7f1d1d",
+        fontsize=9,
+    )
+    if bool(data["alert"].any()):
+        first_alert = int(np.flatnonzero(data["alert"].to_numpy(dtype=bool))[0])
+        alert_elapsed = float(data.iloc[first_alert]["elapsed_min"])
+        ax.axvline(alert_elapsed, color="#ea580c", linestyle="--", linewidth=1.3)
+        ax.text(alert_elapsed, ax.get_ylim()[1] * 0.92, "Alerta aislada", ha="center", color="#9a3412")
+    else:
+        ax.text(
+            0.02,
+            0.92,
+            "Sin alarmas durante la monitorizacion",
+            transform=ax.transAxes,
+            color="#166534",
+            fontsize=10,
+            fontweight="bold",
+        )
+
+    ax.set_title(f"Perfil de riesgo en caso sano real - registro {curve.record}")
+    ax.set_xlabel("Minutos desde el inicio del monitoreo")
+    ax.set_ylabel("Probabilidad estimada de asfixia")
+    ax.set_xlim(0.0, birth_min)
+    ax.set_ylim(0.0, min(1.0, max(0.12, float(y.max()) + 0.08, curve.threshold + 0.05)))
+    sns.despine(ax=ax)
+    fig.tight_layout()
+    fig.savefig(PLOT_04_PATH, bbox_inches="tight")
+    plt.close(fig)
+    return PLOT_04_PATH
+
+
+def plot_winning_feature_importance(top_n: int = 20) -> Path:
+    """Plot top features by XGBoost gain for the winning model."""
+    if not IMPORTANCE_PATH.exists():
+        raise FileNotFoundError(f"No existe {IMPORTANCE_PATH}. Ejecuta primero pipeline_04_fase3_advanced.py.")
+    importance = pd.read_csv(IMPORTANCE_PATH)
+    winning = importance[importance["Model"].eq(WINNING_MODEL)].copy()
+    if winning.empty:
+        raise ValueError(f"No hay importancias para {WINNING_MODEL} en {IMPORTANCE_PATH}.")
+    top = winning.sort_values("Gain", ascending=False).head(top_n).sort_values("Gain", ascending=True)
+
+    fig, ax = plt.subplots(figsize=(10.8, 7.2))
+    colors = ["#2ca58d" if feature.startswith(("delta_", "slope_", "fhr_")) else "#345f8c" for feature in top["Feature"]]
+    ax.barh(top["Feature"], top["Gain"], color=colors, edgecolor="#1f2937", linewidth=0.35)
+    ax.set_title("Variables mas influyentes del XGBoost ganador")
+    ax.set_xlabel("Ganancia media de XGBoost")
+    ax.set_ylabel("")
+    for idx, value in enumerate(top["Gain"]):
+        ax.text(value + top["Gain"].max() * 0.01, idx, f"{value:.1f}", va="center", fontsize=8)
+    ax.text(
+        0.99,
+        0.03,
+        "Modelo: XGBoost secuencial Real + Sintetico",
+        transform=ax.transAxes,
+        ha="right",
+        va="bottom",
+        color="#374151",
+        fontsize=9,
+    )
+    sns.despine(ax=ax)
+    fig.tight_layout()
+    fig.savefig(PLOT_05_PATH, bbox_inches="tight")
+    plt.close(fig)
+    return PLOT_05_PATH
+
+
 def main() -> None:
     """Generate all final visualizations."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     configure_style()
     report = load_final_report()
+    test_predictions, threshold = fit_winning_xgb_predictions()
+    positive_curve = select_positive_transition_curve(test_predictions, threshold)
+    healthy_curve = select_healthy_curve(test_predictions, threshold)
 
     created = [
         plot_metric_comparison(report),
         plot_clinical_tradeoff(report),
-        plot_early_warning_profile(reconstruct_winning_xgb_curve()),
+        plot_early_warning_profile(positive_curve),
+        plot_healthy_profile(healthy_curve),
+        plot_winning_feature_importance(),
     ]
 
     print("Graficos generados:")
