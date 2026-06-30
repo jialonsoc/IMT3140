@@ -1,0 +1,103 @@
+{
+  "random_state": 42,
+  "n_iter_search": 20,
+  "min_recall_for_threshold": 0.75,
+  "features": [
+    "Age",
+    "Gravidity",
+    "Parity",
+    "Diabetes",
+    "Pyrexia",
+    "Gest_weeks",
+    "Sex",
+    "fhr_invalid_pct",
+    "uc_invalid_pct",
+    "fhr_baseline_mean_bpm",
+    "fhr_baseline_median_bpm",
+    "fhr_baseline_std_bpm",
+    "fhr_baseline_slope_bpm_min",
+    "accelerations_count",
+    "accelerations_mean_amp_bpm",
+    "accelerations_mean_duration_s",
+    "decelerations_count",
+    "decelerations_mean_amp_bpm",
+    "decelerations_mean_duration_s",
+    "uc_contractions_count",
+    "fhr_apen",
+    "fhr_sampen",
+    "ltv_mean_amp_bpm",
+    "ltv_median_amp_bpm",
+    "ltv_valid_windows",
+    "decelerations_early_count",
+    "decelerations_late_count",
+    "decelerations_variable_count",
+    "deceleration_uc_lag_mean_s",
+    "deceleration_uc_lag_median_s",
+    "dfa_alpha",
+    "dfa_intercept",
+    "dfa_alpha_short",
+    "dfa_alpha_long",
+    "delta_baseline_std_bpm",
+    "delta_sampen",
+    "fhr_std_falling_streak",
+    "fhr_sampen_falling_streak",
+    "slope_sampen_30min",
+    "slope_baseline_mean_30min"
+  ],
+  "models": [
+    {
+      "model": "XGBoost - Sequential real-only",
+      "best_params": {
+        "model__subsample": 1.0,
+        "model__scale_pos_weight": 2.8732591211946215,
+        "model__reg_lambda": 1.0,
+        "model__n_estimators": 300,
+        "model__min_child_weight": 3,
+        "model__max_depth": 3,
+        "model__learning_rate": 0.01,
+        "model__colsample_bytree": 1.0
+      },
+      "best_cv_auprc": 0.17351794589911643,
+      "threshold": 0.16457702219486237
+    },
+    {
+      "model": "CatBoost - Sequential real-only",
+      "best_params": {
+        "model__random_strength": 2.0,
+        "model__learning_rate": 0.03,
+        "model__l2_leaf_reg": 10.0,
+        "model__iterations": 100,
+        "model__depth": 2
+      },
+      "best_cv_auprc": 0.17686696440700017,
+      "threshold": 0.4436941163558597
+    },
+    {
+      "model": "XGBoost - Sequential real+synthetic",
+      "best_params": {
+        "model__subsample": 1.0,
+        "model__scale_pos_weight": 1.0,
+        "model__reg_lambda": 1.0,
+        "model__n_estimators": 500,
+        "model__min_child_weight": 5,
+        "model__max_depth": 5,
+        "model__learning_rate": 0.05,
+        "model__colsample_bytree": 0.7
+      },
+      "best_cv_auprc": 0.22613173430204164,
+      "threshold": 0.005002801772207022
+    },
+    {
+      "model": "CatBoost - Sequential real+synthetic",
+      "best_params": {
+        "model__random_strength": 2.0,
+        "model__learning_rate": 0.05,
+        "model__l2_leaf_reg": 3.0,
+        "model__iterations": 300,
+        "model__depth": 4
+      },
+      "best_cv_auprc": 0.2595296889310486,
+      "threshold": 0.09398587675769576
+    }
+  ]
+}
