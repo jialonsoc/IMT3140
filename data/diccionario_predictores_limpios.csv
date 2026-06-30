@@ -1,0 +1,42 @@
+﻿Variable,Tipo_Feature,Descripción_Clínica_Matemática
+Age,Basal materno-fetal,Edad materna en años al ingreso; covariable basal previa al desenlace.
+Gravidity,Basal materno-fetal,Número total de gestaciones maternas registradas antes del parto índice.
+Parity,Basal materno-fetal,Número de partos previos; aproxima experiencia obstétrica basal sin usar evolución intraparto futura.
+Diabetes,Basal materno-fetal,Indicador binario de diabetes materna; factor metabólico basal asociado a riesgo obstétrico.
+Pyrexia,Basal materno-fetal,Indicador binario de fiebre materna registrada; marcador basal/intraparto temprano de posible infección o estrés.
+Weight_g,Basal materno-fetal,Peso fetal/neonatal en gramos disponible como covariable biométrica basal del caso.
+Gest_weeks,Basal materno-fetal,Edad gestacional en semanas; ajusta madurez fetal y tolerancia fisiológica.
+Sex,Basal materno-fetal,Sexo fetal/neonatal codificado numéricamente; covariable basal de susceptibilidad biológica.
+fhr_invalid_pct,Calidad de señal,"Porcentaje de muestras FHR inválidas en la ventana, definidas como cero o NaN antes de interpolación; mide calidad de contacto."
+uc_invalid_pct,Calidad de señal,"Porcentaje de muestras UC inválidas en la ventana, definidas como cero o NaN antes de interpolación; mide calidad de señal uterina."
+fhr_baseline_mean_bpm,Morfología temporal FIGO,"Media robusta de la línea base FHR de la ventana, en latidos por minuto, tras limpieza de pérdidas de contacto."
+fhr_baseline_median_bpm,Morfología temporal FIGO,"Mediana robusta de la línea base FHR de la ventana, menos sensible a aceleraciones y desaceleraciones transitorias."
+fhr_baseline_std_bpm,Morfología temporal FIGO,Desviación estándar de la línea base FHR en la ventana; resume dispersión de la frecuencia fetal basal.
+fhr_baseline_slope_bpm_min,Morfología temporal FIGO,"Pendiente lineal de la línea base FHR dentro de la ventana, en lpm/min; captura deriva temporal local."
+accelerations_count,Morfología temporal FIGO,Conteo de aceleraciones FHR de al menos 15 lpm sostenidas al menos 15 segundos en la ventana.
+accelerations_mean_amp_bpm,Morfología temporal FIGO,"Amplitud media, en lpm, de las aceleraciones detectadas respecto de la línea base local."
+accelerations_mean_duration_s,Morfología temporal FIGO,"Duración media, en segundos, de las aceleraciones detectadas en la ventana actual."
+decelerations_count,Morfología temporal FIGO,Conteo total de desaceleraciones FHR de al menos 15 lpm sostenidas al menos 15 segundos.
+decelerations_mean_amp_bpm,Morfología temporal FIGO,"Amplitud media, en lpm, de las caídas FHR clasificadas como desaceleraciones."
+decelerations_mean_duration_s,Morfología temporal FIGO,"Duración media, en segundos, de las desaceleraciones detectadas en la ventana."
+uc_contractions_count,Actividad uterina / acoplamiento FHR-UC,Conteo de contracciones uterinas detectadas en UC durante la ventana de 20 minutos.
+fhr_apen,Complejidad no lineal,Entropía aproximada de la FHR interpolada; cuantifica irregularidad temporal y complejidad de corto plazo.
+fhr_sampen,Complejidad no lineal,Entropía muestral de la FHR interpolada; estima complejidad sin autocoincidencias y es menos sesgada que ApEn.
+ltv_mean_amp_bpm,Morfología temporal FIGO,"Amplitud media de la variabilidad FHR de largo plazo en subventanas válidas, excluyendo eventos extremos."
+ltv_median_amp_bpm,Morfología temporal FIGO,Mediana de la variabilidad FHR de largo plazo en subventanas válidas; descriptor robusto de oscilación basal.
+ltv_valid_windows,Calidad de señal,Número de subventanas válidas usadas para estimar la variabilidad de largo plazo.
+decelerations_early_count,Actividad uterina / acoplamiento FHR-UC,"Conteo de desaceleraciones tempranas, clasificadas por sincronía cercana con el pico de contracción UC."
+decelerations_late_count,Actividad uterina / acoplamiento FHR-UC,"Conteo de desaceleraciones tardías, clasificadas por ocurrir después del pico UC; marcador clínico de hipoxia progresiva."
+decelerations_variable_count,Actividad uterina / acoplamiento FHR-UC,Conteo de desaceleraciones variables sin patrón temporal fijo respecto de UC.
+deceleration_uc_lag_mean_s,Actividad uterina / acoplamiento FHR-UC,"Desfase medio, en segundos, entre el nadir de desaceleración FHR y el pico UC más cercano."
+deceleration_uc_lag_median_s,Actividad uterina / acoplamiento FHR-UC,"Mediana del desfase, en segundos, entre desaceleraciones FHR y picos UC; versión robusta del acoplamiento temporal."
+dfa_alpha,Complejidad no lineal,Exponente alfa global del análisis de fluctuación sin tendencia (DFA) sobre FHR; resume correlación fractal.
+dfa_intercept,Complejidad no lineal,Intercepto del ajuste log-log del DFA; componente de escala de las fluctuaciones FHR.
+dfa_alpha_short,Complejidad no lineal,Exponente DFA en escalas cortas; captura correlación local de la FHR en horizontes breves.
+dfa_alpha_long,Complejidad no lineal,Exponente DFA en escalas largas; captura persistencia de la dinámica FHR en horizontes extendidos.
+delta_baseline_std_bpm,Gradiente longitudinal / Time Mix,Cambio de fhr_baseline_std_bpm respecto de la ventana de hace 10 minutos (lag de dos pasos de 5 min).
+delta_sampen,Gradiente longitudinal / Time Mix,Cambio de fhr_sampen respecto de la ventana de hace 10 minutos; cuantifica pérdida o ganancia reciente de complejidad.
+fhr_std_falling_streak,Gradiente longitudinal / Time Mix,Racha de ventanas consecutivas donde fhr_baseline_std_bpm disminuye respecto de la ventana previa; se reinicia al subir o mantenerse.
+fhr_sampen_falling_streak,Gradiente longitudinal / Time Mix,Racha de ventanas consecutivas donde fhr_sampen disminuye respecto de la ventana previa; indicador de simplificación sostenida.
+slope_sampen_30min,Gradiente longitudinal / Time Mix,Pendiente lineal de fhr_sampen calculada sobre las últimas seis ventanas continuas (30 minutos).
+slope_baseline_mean_30min,Gradiente longitudinal / Time Mix,Pendiente lineal de fhr_baseline_mean_bpm sobre las últimas seis ventanas continuas (30 minutos).
