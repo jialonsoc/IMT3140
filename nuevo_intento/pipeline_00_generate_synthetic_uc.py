@@ -23,7 +23,7 @@ from tqdm import tqdm
 RAW_DIR = Path("data/raw")
 SYNTH_DIR = Path("data/synthetic")
 SYNTHETIC_METADATA_PATH = Path("data/dataset_synthetic.csv")
-MANIFEST_PATH = Path("data/nuevo_intento_synthetic_uc_manifest.csv")
+MANIFEST_PATH = Path("data/nuevo_intento/synthetic_uc_manifest.csv")
 
 SEED = 42
 N_MULTIPLIER = 2
@@ -148,6 +148,7 @@ def generate_synthetic_uc() -> pd.DataFrame:
 
 def main() -> None:
     """CLI entrypoint."""
+    MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
     manifest = generate_synthetic_uc()
     print(f"Synthetic UC files written: {len(manifest)}")
     print(f"Manifest: {MANIFEST_PATH}")

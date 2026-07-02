@@ -10,7 +10,7 @@ Models:
     catboost.CatBoostClassifier
 
 Final output:
-    data/nuevo_intento_final_comparative_report.csv
+    data/nuevo_intento/final_comparative_report.csv
 """
 
 from __future__ import annotations
@@ -46,11 +46,11 @@ from pipeline_01_feature_engineering import (
 )
 
 
-FINAL_REPORT_PATH = Path("data/nuevo_intento_final_comparative_report.csv")
-BEST_PARAMS_PATH = Path("data/nuevo_intento_fase3_best_params.json")
-IMPORTANCE_OUTPUT_PATH = Path("data/nuevo_intento_fase3_feature_importance.csv")
+FINAL_REPORT_PATH = Path("data/nuevo_intento/final_comparative_report.csv")
+BEST_PARAMS_PATH = Path("data/nuevo_intento/fase3_best_params.json")
+IMPORTANCE_OUTPUT_PATH = Path("data/nuevo_intento/fase3_feature_importance.csv")
 IMPORTANCE_FIG_PATH = Path("reports/nuevo_intento_fase3_feature_importance.png")
-FASE2_CLEAN_PATH = Path("data/nuevo_intento_results_fase2_windows_clean.csv")
+FASE2_CLEAN_PATH = Path("data/nuevo_intento/results_fase2_windows_clean.csv")
 
 RANDOM_STATE = 42
 N_ITER_SEARCH = 20

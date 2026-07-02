@@ -2,10 +2,10 @@
 Pipeline 02 - Clean univariate logistic analysis on real training windows.
 
 Input:
-    data/nuevo_intento_processed_features_windows_real.csv
+    data/nuevo_intento/processed_features_windows_real.csv
 
 Output:
-    data/nuevo_intento_results_fase1_windows_clean.csv
+    data/nuevo_intento/results_fase1_windows_clean.csv
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ from pipeline_01_feature_engineering import (
 )
 
 
-OUTPUT_PATH = Path("data/nuevo_intento_results_fase1_windows_clean.csv")
+OUTPUT_PATH = Path("data/nuevo_intento/results_fase1_windows_clean.csv")
 RANDOM_STATE = 42
 
 

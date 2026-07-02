@@ -36,9 +36,9 @@ from pipeline_04_fase3_advanced import (  # noqa: E402
 )
 
 
-FINAL_REPORT_PATH = Path("data/nuevo_intento_final_comparative_report.csv")
-BEST_PARAMS_PATH = Path("data/nuevo_intento_fase3_best_params.json")
-IMPORTANCE_PATH = Path("data/nuevo_intento_fase3_feature_importance.csv")
+FINAL_REPORT_PATH = Path("data/nuevo_intento/final_comparative_report.csv")
+BEST_PARAMS_PATH = Path("data/nuevo_intento/fase3_best_params.json")
+IMPORTANCE_PATH = Path("data/nuevo_intento/fase3_feature_importance.csv")
 OUTPUT_DIR = Path("output_plots/nuevo_intento")
 
 PLOT_01_PATH = OUTPUT_DIR / "plot_01_comparativa_auroc_auprc.png"

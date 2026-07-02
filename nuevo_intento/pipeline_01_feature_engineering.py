@@ -2,8 +2,8 @@
 Pipeline 01 - Clean window feature engineering for clinical real-time modeling.
 
 Outputs:
-    data/nuevo_intento_processed_features_windows_real.csv
-    data/nuevo_intento_processed_features_windows_synthetic.csv
+    data/nuevo_intento/processed_features_windows_real.csv
+    data/nuevo_intento/processed_features_windows_synthetic.csv
 
 Design rule:
     No future/outcome descriptor is retained as a modelable predictor. The
@@ -39,10 +39,11 @@ from feature_extractor import (
 
 
 REAL_SOURCE_PATH = Path("data/processed_features_windows.csv")
-REAL_OUTPUT_PATH = Path("data/nuevo_intento_processed_features_windows_real.csv")
+OUTPUT_DIR = Path("data/nuevo_intento")
+REAL_OUTPUT_PATH = OUTPUT_DIR / "processed_features_windows_real.csv"
 SYNTH_DIR = Path("data/synthetic")
 SYNTHETIC_METADATA_PATH = Path("data/dataset_synthetic.csv")
-SYNTHETIC_OUTPUT_PATH = Path("data/nuevo_intento_processed_features_windows_synthetic.csv")
+SYNTHETIC_OUTPUT_PATH = OUTPUT_DIR / "processed_features_windows_synthetic.csv"
 CLINICAL_METADATA_PATH = Path("data/clinical_metadata.csv")
 
 PROHIBITED_COLUMNS = {

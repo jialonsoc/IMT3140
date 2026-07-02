@@ -2,11 +2,11 @@
 Pipeline 03 - Clean multivariate forward logistic models with AIC/BIC.
 
 Inputs:
-    data/nuevo_intento_processed_features_windows_real.csv
+    data/nuevo_intento/processed_features_windows_real.csv
 
 Outputs:
-    data/nuevo_intento_results_fase2_windows_clean.csv
-    data/nuevo_intento_results_fase2_windows_clean_coefficients.json
+    data/nuevo_intento/results_fase2_windows_clean.csv
+    data/nuevo_intento/results_fase2_windows_clean_coefficients.json
 """
 
 from __future__ import annotations
@@ -43,8 +43,8 @@ from pipeline_01_feature_engineering import (
 )
 
 
-RESULTS_OUTPUT_PATH = Path("data/nuevo_intento_results_fase2_windows_clean.csv")
-COEFFICIENTS_OUTPUT_PATH = Path("data/nuevo_intento_results_fase2_windows_clean_coefficients.json")
+RESULTS_OUTPUT_PATH = Path("data/nuevo_intento/results_fase2_windows_clean.csv")
+COEFFICIENTS_OUTPUT_PATH = Path("data/nuevo_intento/results_fase2_windows_clean_coefficients.json")
 RANDOM_STATE = 42
 MIN_RECALL_FOR_THRESHOLD = 0.75
 Criterion = Literal["aic", "bic"]
